@@ -310,7 +310,6 @@ end
 
 function Fire:loadRegistered()
 	local firesFile = loadData("fires")
-	self.random = {}
 	if firesFile ~= nil then
 		for index, fire in pairs(firesFile) do
 			for _, flame in pairs(fire.flames) do
@@ -319,12 +318,22 @@ function Fire:loadRegistered()
 			if fire.dispatchCoords then
 				fire.dispatchCoords = vector3(fire.dispatchCoords.x, fire.dispatchCoords.y, fire.dispatchCoords.z)
 			end
-			if fire.random == true then
-				self.random[index] = true
-			end
 		end
 		self.registered = firesFile
+		self:updateRandom()
 	else
 		saveData({}, "fires")
+	end
+end
+
+function Fire:updateRandom() -- Creates a table containing all fires with random flag enabled
+	self.random = {}
+	if not (self.registered and next(self.registered) ~= nil) then
+		return
+	end
+	for k, v in pairs(self.registered) do
+		if v.random == true then
+			self.random[k] = true
+		end
 	end
 end
